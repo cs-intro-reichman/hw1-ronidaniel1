@@ -7,12 +7,19 @@ public class Bill3 {
         String name3 = args[2];
         int price = Integer.parseInt(args[3]);
         double price1 =Math.ceil((double)price / 3);
-        System.out.println( "Dear"+ " " + name3+ ", " + name2+ ", and " + name1+ " " +": pay " +  price1 + " Shekels each.");
+        System.out.println( "Dear"+ " " + name3+ ", " + name2+ ", and " + name1+ ": pay " +  price1 + " Shekels each.");
 	    // Replace this comment with the rest of your code
 
         /*
         % java Bill3 Ron Lisa Dan 100
 Dear Dan, Lisa, and Ron: pay 34.0 Shekels each.
+         */
+
+        /*
+        Expected:
+        Dear Itay, Moti, and Dan: pay 100.0 Shekels each
+       Actual:
+        Dear Itay, Moti, and Dan : pay 100.0 Shekels each.
          */
 	}
 }

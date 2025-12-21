@@ -1,0 +1,74 @@
+public class SpellChecker {
+
+    public static void main(String[] args) {
+        // קבלת מילה ומרחק סף מהמשתמש דרך ה-Terminal
+        String word = args[0];
+        int threshold = Integer.parseInt(args[1]);
+        
+        // קריאת המילון מהקובץ dictionary.txt שנמצא בתיקייה
+        String[] dictionary = readDictionary("dictionary.txt");
+        
+        // הרצת הבדיקה והדפסת התוצאה
+        String correction = spellChecker(word, threshold, dictionary);
+        System.out.println(correction);
+    }
+
+    // מחזירה את המחרוזת ללא התו הראשון
+    public static String tail(String str) {
+        if (str.length() <= 1) return "";
+        return str.substring(1);
+    }
+
+    // חישוב מרחק לוינשטיין בין שתי מילים (מרחק עריכה)
+    public static int levenshtein(String word1, String word2) {
+        String word1Low = word1.toLowerCase();
+        String word2Low = word2.toLowerCase();
+
+        if (word1Low.length() == 0) return word2Low.length();
+        if (word2Low.length() == 0) return word1Low.length();
+
+        if (word1Low.charAt(0) == word2Low.charAt(0)) {
+            return levenshtein(tail(word1Low), tail(word2Low));
+        } else {
+            // חישוב המינימום בין מחיקה, הוספה או החלפה
+            return 1 + Math.min(Math.min(
+                    levenshtein(tail(word1Low), word2Low),      // מחיקה
+                    levenshtein(word1Low, tail(word2Low))),     // הוספה
+                    levenshtein(tail(word1Low), tail(word2Low)) // החלפה
+            );
+        }
+    }
+
+    // קריאת המילון מתוך קובץ טקסט
+    public static String[] readDictionary(String fileName) {
+        String[] dictionary = new String[3000];
+        In in = new In(fileName); // שימוש במחלקת In שקיימת בפרויקט שלך
+        for (int i = 0; i < dictionary.length; i++) {
+            if (!in.isEmpty()) {
+                dictionary[i] = in.readLine();
+            }
+        }
+        return dictionary;
+    }
+
+    // מעבר על המילון ומציאת המילה הקרובה ביותר שנמצאת תחת הסף
+    public static String spellChecker(String word, int threshold, String[] dictionary) {
+        String wordLow = word.toLowerCase();
+        String wordMatch = word; // ברירת מחדל: המילה המקורית
+        int minLev = Integer.MAX_VALUE;
+
+        for (String dictWord : dictionary) {
+            if (dictWord == null) continue; // הגנה למקרה שהמילון לא מלא
+            
+            int lev = levenshtein(wordLow, dictWord);
+            
+            // מציאת המילה עם המרחק הכי קטן שעדיין קטן או שווה לסף
+            if (lev < minLev && lev <= threshold) {
+                minLev = lev;
+                wordMatch = dictWord;
+            }
+        }
+        return wordMatch;
+    }
+}
+.
